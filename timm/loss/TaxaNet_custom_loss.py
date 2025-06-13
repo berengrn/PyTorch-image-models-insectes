@@ -33,7 +33,6 @@ def Build_H_Matrix(data):
         parent_to_children[idx_familles[family]].add(idx_genres[genus])
         parent_to_children[idx_genres[genus]].add(idx_especes[species])
 
-    # La structure de données parent_to_children permet de connaître la liste des noeuds fils de chaque noeud parent.
     parent_to_children = {k: list(v) for k, v in parent_to_children.items()}
 
     N = n_ordres + n_familles + n_genres + n_especes

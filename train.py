@@ -42,6 +42,8 @@ from timm.optim import create_optimizer_v2, optimizer_kwargs
 from timm.scheduler import create_scheduler_v2, scheduler_kwargs
 from timm.utils import ApexScaler, NativeScaler
 
+from timm.loss import TaxaNet_custom_loss
+
 try:
     from apex import amp
     from apex.parallel import DistributedDataParallel as ApexDDP
@@ -295,6 +297,10 @@ group.add_argument('--bce-loss', action='store_true', default=False,
                    help='Enable BCE loss w/ Mixup/CutMix use.')
 group.add_argument('--bce-sum', action='store_true', default=False,
                    help='Sum over classes when using BCE loss.')
+group.add_argument('--custom-loss', action='store_true', default=False,
+                   help='Custom loss for taxanomic Hierarchical classification')
+group.add_argument('--loss-hierarchy', default='', type=str, metavar='HIERARCHY',
+                   help='hierarchy csv file')
 group.add_argument('--bce-target-thresh', type=float, default=None,
                    help='Threshold for binarizing softened BCE targets (default: None, disabled).')
 group.add_argument('--bce-pos-weight', type=float, default=None,
@@ -891,6 +897,12 @@ def main():
             )
         else:
             train_loss_fn = LabelSmoothingCrossEntropy(smoothing=args.smoothing)
+    elif args.custom_loss:
+        if args.loss_hierarchy:
+            train_loss_fn = TaxaNet_custom_loss(args.loss_hierarchy)
+        else:
+            print("error:please specify hierarchy csv file to use custom hierachical loss")
+            exit(1)
     else:
         train_loss_fn = nn.CrossEntropyLoss()
     train_loss_fn = train_loss_fn.to(device=device)

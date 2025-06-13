@@ -2,31 +2,34 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from timm.models import create_model,registry
+from ._registry import register_model
 
-class taxaNet(nn.Module):
+class taxaNetModel(nn.Module):
 
     def __init__(self):
-        super.__init__()
+        from timm.models import create_model
+        super().__init__()
+        self.num_classes = 4
         self.backbone = create_model(
             'efficientnet_b0',
             pretrained=True,
             num_classes=0,
             global_pool=''
         )
-        self.backbone.classifier = nn.Sequential(
+        self.classifier = nn.Sequential(
             nn.Linear(1280,512),
             nn.ReLU(),
-            nn.Droupout(p=0.5),
+            nn.Dropout(p=0.5),
             nn.Linear(512,4),
         )
 
-    def _forward(self,x):
-        return self.backbnone(x)
+    def forward(self,x):
+        x = self.backbone(x)
+        return self.classifier(x)
 
 @register_model
 def taxaNet(**kwargs):
-    model = taxaNet()
+    model = taxaNetModel()
     return model
 
         

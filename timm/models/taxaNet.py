@@ -3,6 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from ._registry import register_model
+from torchinfo import summary
 
 class taxaNetModel(nn.Module):
 
@@ -14,13 +15,13 @@ class taxaNetModel(nn.Module):
             'efficientnet_b0',
             pretrained=True,
             num_classes=0,
-            global_pool=''
+            global_pool='avg'
         )
         self.classifier = nn.Sequential(
             nn.Linear(1280,512),
             nn.ReLU(),
             nn.Dropout(p=0.5),
-            nn.Linear(512,4),
+            nn.Linear(512,512),
         )
 
     def forward(self,x):
@@ -31,6 +32,16 @@ class taxaNetModel(nn.Module):
 def taxaNet(**kwargs):
     model = taxaNetModel()
     return model
+
+if __name__ == '__main__':
+    from timm.models import create_model
+    model = create_model(
+            'efficientnet_b0',
+            pretrained=True,
+            num_classes=0,
+            global_pool='avg'
+        )
+    print(summary(model,(32,3,224,224),verbose = True))
 
         
 

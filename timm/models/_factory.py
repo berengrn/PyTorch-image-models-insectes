@@ -38,7 +38,7 @@ def safe_model_name(model_name: str, remove_source: bool = True):
     return make_safe(model_name)
 
 
-def create_model(
+def  create_model(
         model_name: str,
         pretrained: bool = False,
         pretrained_cfg: Optional[Union[str, Dict[str, Any], PretrainedCfg]] = None,

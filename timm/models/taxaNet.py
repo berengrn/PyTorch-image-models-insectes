@@ -35,13 +35,10 @@ def taxaNet(**kwargs):
 
 if __name__ == '__main__':
     from timm.models import create_model
-    model = create_model(
-            'efficientnet_b0',
-            pretrained=True,
-            num_classes=0,
-            global_pool='avg'
-        )
-    print(summary(model,(32,3,224,224),verbose = True))
+    model = create_model('TaxaNet')
+    summary(model)
+ 
+
 
         
 

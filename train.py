@@ -899,7 +899,7 @@ def main():
             train_loss_fn = LabelSmoothingCrossEntropy(smoothing=args.smoothing)
     elif args.custom_loss:
         if args.loss_hierarchy:
-            train_loss_fn = TaxaNet_custom_loss(args.loss_hierarchy)
+            train_loss_fn = taxanet_custom_loss(args.loss_hierarchy)
         else:
             print("error:please specify hierarchy csv file to use custom hierachical loss")
             exit(1)

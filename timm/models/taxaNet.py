@@ -26,7 +26,8 @@ class taxaNetModel(nn.Module):
 
     def forward(self,x):
         x = self.backbone(x)
-        return self.classifier(x)
+        x =  self.classifier(x)
+        return x
 
 @register_model
 def taxaNet(**kwargs):

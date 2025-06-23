@@ -42,7 +42,7 @@ from timm.optim import create_optimizer_v2, optimizer_kwargs
 from timm.scheduler import create_scheduler_v2, scheduler_kwargs
 from timm.utils import ApexScaler, NativeScaler
 
-from timm.loss import TaxaNet_custom_loss
+from timm.loss import taxanet_custom_loss
 
 try:
     from apex import amp

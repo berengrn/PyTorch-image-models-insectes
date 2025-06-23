@@ -119,7 +119,7 @@ class TaxaNetLoss(nn.Module):
 
             for i in range(1,N):
                 sum += (self.H[torch.argmax(levels_pred[k-1][i])][torch.argmax(levels_pred[k][i])] == 0)*np.e
-            sum += ce_fn(levels_pred[k],levels_true[k])
+            sum += ce_fn(levels_pred[k],levels_true[k]) 
             sum *= weights[k]
             loss += sum
 

@@ -43,6 +43,7 @@ from timm.scheduler import create_scheduler_v2, scheduler_kwargs
 from timm.utils import ApexScaler, NativeScaler
 
 from timm.loss import taxanet_custom_loss
+from pathlib import Path
 
 try:
     from apex import amp
@@ -299,7 +300,7 @@ group.add_argument('--bce-sum', action='store_true', default=False,
                    help='Sum over classes when using BCE loss.')
 group.add_argument('--custom-loss', action='store_true', default=False,
                    help='Custom loss for taxanomic Hierarchical classification')
-group.add_argument('--loss-hierarchy', default='', type=str, metavar='HIERARCHY',
+group.add_argument('--hierarchy', default='', type=str, metavar='HIERARCHY',
                    help='hierarchy csv file')
 group.add_argument('--bce-target-thresh', type=float, default=None,
                    help='Threshold for binarizing softened BCE targets (default: None, disabled).')
@@ -500,6 +501,9 @@ def main():
             file=args.pretrained_path,
             num_classes=-1,  # force head adaptation
         )
+
+    if args.hierarchy:
+        args.model_kwargs["hierarchy"] = args.hierarchy
 
     model = create_model(
         args.model,
@@ -898,8 +902,8 @@ def main():
         else:
             train_loss_fn = LabelSmoothingCrossEntropy(smoothing=args.smoothing)
     elif args.custom_loss:
-        if args.loss_hierarchy:
-            train_loss_fn = taxanet_custom_loss(args.loss_hierarchy)
+        if args.hierarchy:
+            train_loss_fn = taxanet_custom_loss(args.hierarchy)
         else:
             print("error:please specify hierarchy csv file to use custom hierachical loss")
             exit(1)

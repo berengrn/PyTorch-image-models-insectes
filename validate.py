@@ -27,6 +27,7 @@ from timm.layers import apply_test_time_pool, set_fast_norm
 from timm.models import create_model, load_checkpoint, is_model, list_models
 from timm.utils import accuracy, AverageMeter, natural_key, setup_default_logging, set_jit_fuser, \
     decay_batch_step, check_batch_size_retry, ParseKwargs, reparameterize_model
+from timm.loss import taxanet_custom_loss
 
 try:
     from apex import amp
@@ -164,6 +165,12 @@ parser.add_argument('--naflex-loader', action='store_true', default=False,
 parser.add_argument('--naflex-max-seq-len', type=int, default=576,
                    help='Fixed maximum sequence length for NaFlex loader (validation)')
 
+#arguments for our hierarchical classification
+parser.add_argument('--hierarchy', default='', type=str, metavar='HIERARCHY',
+                   help='hierarchy csv file')
+parser.add_argument('--custom-loss', action='store_true', default=False,
+                   help='Custom loss for taxanomic Hierarchical classification')
+
 
 def validate(args):
     # might as well try to validate something
@@ -212,6 +219,12 @@ def validate(args):
         in_chans = args.in_chans
     elif args.input_size is not None:
         in_chans = args.input_size[0]
+
+    #getting the path to the hierarchy.csv, to give it as a kwarg for our hierarchical classification model
+    if args.hierarchy:
+        if not hasattr(args, "model_kwargs"):
+            args.model_kwargs = {}
+        args.model_kwargs["hierarchy"] = args.hierarchy
 
     model = create_model(
         args.model,
@@ -267,6 +280,13 @@ def validate(args):
         model = torch.nn.DataParallel(model, device_ids=list(range(args.num_gpu)))
 
     criterion = nn.CrossEntropyLoss().to(device)
+
+    if args.custom_loss:
+        if args.hierarchy:
+            criterion = taxanet_custom_loss(args.hierarchy)
+        else:
+            print("ERROR: please specify a hierarchy mapping csv file in order to use hierarchical loss")
+            exit(1)
 
     root_dir = args.data or args.data_dir
     if args.input_img_mode is None:

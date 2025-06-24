@@ -111,6 +111,7 @@ class TaxaNetLoss(nn.Module):
         levels_pred = torch.stack([ torch.stack([y_pred[j] * levels_supports[i] for j in range(N)])  for i in range(nbLevels)])
 
         levels_true = torch.unbind(y_true,dim = 1)
+
         
         ce_fn = nn.CrossEntropyLoss()
         for k in range(1,nbLevels):

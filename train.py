@@ -503,6 +503,8 @@ def main():
         )
 
     if args.hierarchy:
+        if not hasattr(args, "model_kwargs"):
+            args.model_kwargs = {}
         args.model_kwargs["hierarchy"] = args.hierarchy
 
     model = create_model(

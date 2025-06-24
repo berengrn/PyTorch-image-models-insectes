@@ -10,7 +10,7 @@ class taxaNetModel(nn.Module):
 
     def __init__(self,hierarchy_csv):
         from timm.models import create_model
-        super().__init__()
+        super().__init__()  
 
         NbClassesLevels = utils.classCounter(hierarchy_csv)
         self.num_levels = len(NbClassesLevels)

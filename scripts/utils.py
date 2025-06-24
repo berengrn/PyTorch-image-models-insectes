@@ -7,7 +7,8 @@ def classCounter(hierarchy_csv):
         KnownItems = []
         for row in reader:
             for i,col in enumerate(row):
-                if col not in KnownItems:
+                value = row[col]
+                if value not in KnownItems:
                     NbClassesLevel[i] += 1
-                    KnownItems.append(col)
+                    KnownItems.append(value)
     return NbClassesLevel
